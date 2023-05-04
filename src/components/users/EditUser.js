@@ -6,7 +6,7 @@ import Navbar from "../layout/Navbar";
 const EditUser = () => {
   let history = useNavigate();
   const { id } = useParams();
-  console.log(id);
+  // console.log(id);
   const [user, setUser] = useState({
     name: "",
     username: "",
@@ -24,7 +24,7 @@ const EditUser = () => {
       },
     },
     company: {
-      name: "",
+      companyName: "",
       catchPhrase: "",
       bs: "",
     },
@@ -33,45 +33,45 @@ const EditUser = () => {
   const { name, username, email, phone, website, address, company } = user;
 
   const onInputChange = (event) => {
-    setUser({
-      ...user,
-      [event.target.name]: event.target.value,
-      address : {
-        ...user.address,
-        [event.target.name]: event.target.value,
-        geo : {
-          ...user.address.geo,
-          [event.target.name]: event.target.value,
-        }
-      },
-      company : {
-        ...user.company,
-        [event.target.name]: event.target.value
-      }
-    });
-   console.log(user);
+    const { name, value } = event.target;
+
+    if (name === "street" || name === "suite" || name === "city" || name === "zipcode") {
+      setUser((prevState) => ({
+        ...prevState,
+        address: {
+          ...prevState.address,
+          [name]: value,
+        },
+      }));
+    } else if (name === "lat" || name === "lng") {
+      setUser((prevState) => ({
+        ...prevState,
+        address: {
+          ...prevState.address,
+          geo: {
+            ...prevState.address.geo,
+            [name]: value,
+          },
+        },
+      }));
+    } else if (name === "catchPhrase" || name === "bs" || name === "companyName") {
+      setUser((prevState) => ({
+        ...prevState,
+        company: {
+          ...prevState.company,
+          [name]: value,
+        },
+      }));
+    } else {
+      setUser((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
   };
 
 
-  // const onInputChange = (event) => {
-  //   const { name, value } = event.target;
-  //   setUser((prevState) => ({
-  //     ...prevState,
-  //     [name]: value,
-  //     address: {
-  //       ...prevState.address,
-  //       [name]: value,
-  //       geo: {
-  //         ...prevState.address.geo,
-  //         [name]: value,
-  //       },
-  //     },
-  //     company: {
-  //       ...prevState.company,
-  //       [name]: value,
-  //     },
-  //   }));
-  // };
+
 
   useEffect(() => {
     loadUsers();
@@ -79,15 +79,19 @@ const EditUser = () => {
 
   const onSubmit = async (event) => {
     event.preventDefault();
-    console.log(user);
-    // await axios.put(`http://localhost:3003/users/${id}`, user);
+    user.company.name = user.company.companyName;
+    delete user.company.companyName;
+    console.log(JSON.stringify(user));
+    await axios.put(`http://localhost:3003/users/${id}`, user);
     history("/home");
   };
 
   const loadUsers = async () => {
     const result = await axios.get(`http://localhost:3003/users/${id}`);
-    setUser(result.data);
+    result.data.company.companyName = result.data.company.name;
     // console.log(result.data);
+    setUser(result.data);
+
   };
 
   return (
@@ -151,33 +155,33 @@ const EditUser = () => {
           </label>
           <label className="mx-1 mt-1">
             Suite:
-            <input type="text" value={address.suite} name="suite"  onChange={(event) => {
-                onInputChange(event);
-              }} className="form-control" />
+            <input type="text" value={address.suite} name="suite" onChange={(event) => {
+              onInputChange(event);
+            }} className="form-control" />
           </label>
           <label className="mx-1 mt-1">
             City:
-            <input type="text" value={address.city} name="city" className="form-control "  onChange={(event) => {
-                onInputChange(event);
-              }}/>
+            <input type="text" value={address.city} name="city" className="form-control " onChange={(event) => {
+              onInputChange(event);
+            }} />
           </label>
           <label className="mx-1 mt-1">
             Zipcode:
-            <input type="text" value={address.zipcode} name="zipcode" className="form-control"  onChange={(event) => {
-                onInputChange(event);
-              }}/>
+            <input type="text" value={address.zipcode} name="zipcode" className="form-control" onChange={(event) => {
+              onInputChange(event);
+            }} />
           </label>
           <label className="mx-1 mt-1">
             Latitude:
-            <input type="text" value={address.geo.lat} name="lat" className="form-control"  onChange={(event) => {
-                onInputChange(event);
-              }}/>
+            <input type="text" value={address.geo.lat} name="lat" className="form-control" onChange={(event) => {
+              onInputChange(event);
+            }} />
           </label>
           <label className="mx-1 mt-1">
             Longitude:
-            <input type="text" value={address.geo.lng} name="lng" className="form-control"  onChange={(event) => {
-                onInputChange(event);
-              }} />
+            <input type="text" value={address.geo.lng} name="lng" className="form-control" onChange={(event) => {
+              onInputChange(event);
+            }} />
           </label>
           <label className="mx-1 mt-1">
             Phone:
@@ -199,21 +203,21 @@ const EditUser = () => {
           </label>
           <label className="mx-1 mt-1">
             Company Name:
-            <input type="text"  value={company.name} name="companyName" className="form-control"  onChange={(event) => {
-                onInputChange(event);
-              }}/>
+            <input type="text" value={company.companyName} name="companyName" className="form-control" onChange={(event) => {
+              onInputChange(event);
+            }} />
           </label>
           <label className="mx-1 mt-1">
             Catch Phrase:
-            <input type="text" value={company.catchPhrase} name="catchPhrase" className="form-control"  onChange={(event) => {
-                onInputChange(event);
-              }}/>
+            <input type="text" value={company.catchPhrase} name="catchPhrase" className="form-control" onChange={(event) => {
+              onInputChange(event);
+            }} />
           </label>
           <label className="mx-1 mt-1">
             Business Slogan:
-            <input type="text" value={company.bs} name="bs" className="form-control"  onChange={(event) => {
-                onInputChange(event);
-              }}/>
+            <input type="text" value={company.bs} name="bs" className="form-control" onChange={(event) => {
+              onInputChange(event);
+            }} />
           </label>
 
           <div className="text-center mt-4">
