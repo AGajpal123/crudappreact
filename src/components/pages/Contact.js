@@ -4,7 +4,7 @@ import * as yup from "yup";
 import Navbar from "../layout/Navbar";
 
 const Contact = () => {
-  const isLoggedIn = false;
+  const isLoggedIn = true;
   const formInitialSchema = {
     email: "",
     password: "",

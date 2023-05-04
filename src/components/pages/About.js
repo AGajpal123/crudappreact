@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import { makeStyles } from "@material-ui/styles";
+import Navbar from "../layout/Navbar";
 import { Paper, Button, Container } from "@mui/material";
 const About = () => {
+  const isLoggedIn = true;
   const roleArray = [
     {
         role: "Help Desk",
@@ -26,7 +28,8 @@ const technician = result.includes("Technician");
 
   return (
     <>
-      <Container maxWidth="sm">
+      {isLoggedIn ? <Navbar /> : null}
+      <Container maxWidth="sm mt-3 w-25">
         <Paper variant="outlined" component={Box} p={2}>
           <Typography variant="h3">Read Docs</Typography>
           <Button variant="contained" color="primary">
@@ -35,7 +38,7 @@ const technician = result.includes("Technician");
         </Paper>
       </Container>
 
-    {technician ?  <button>Help Desk</button>: <button>Technican</button> }
+    {/* {technician ?  <button>Help Desk</button>: <button>Technican</button> } */}
    
     {/* <button>Admin</button>
     
