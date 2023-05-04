@@ -2,11 +2,15 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import Navbar from "../layout/Navbar";
+
 const Home = () => {
   const isLoggedIn = true;
   const [users, setUser] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [recordsPerPage, setRecordsPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
+
 
   useEffect(() => {
     // console.log("Hello");
@@ -32,7 +36,7 @@ const Home = () => {
 
 
 
- const handleSearch = (event) => {
+  const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();
     const filteredData = users.filter(
       (user) =>
@@ -43,16 +47,36 @@ const Home = () => {
     setFilteredUsers(filteredData);
     setSearchQuery(query);
   };
-  
 
-  
+  const handleSelectChange = (event) => {
+    setRecordsPerPage(parseInt(event.target.value));
+    setCurrentPage(1);
+  };
+
+
+
+  const indexOfLastRecord = currentPage * recordsPerPage;
+  const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+  const currentRecords = filteredUsers.slice(indexOfFirstRecord, indexOfLastRecord);
+
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(filteredUsers.length / recordsPerPage); i++) {
+    pageNumbers.push(i);
+  }
+
   return (
     <div>
       {isLoggedIn ? <Navbar /> : null}
 
       <div className="container">
         <div className="py-4">
-        <input type="text" className="form-control w-25" value={searchQuery} onChange={handleSearch} />
+          <div style={{'display':'flex', 'justifyContent':'space-between'}}>
+          <div style={{'display':'flex'}}>
+            <input type="text" className="form-control" value={searchQuery} onChange={handleSearch} 
+            placeholder="Search" />
+            <button class="btn btn-outline-secondary"  type="button" id="button-addon2">Search</button>
+          </div>
+          </div>
           <h1></h1>
           <table class="table table-striped border shadow">
             <thead>
@@ -65,7 +89,7 @@ const Home = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredUsers.map((user, index) => (
+              {filteredUsers.slice(0,recordsPerPage).map((user, index) => (
                 <tr key={user.id}>
                   <th scope="row">{index + 1}</th>
                   <td>{user.name}</td>
@@ -97,6 +121,20 @@ const Home = () => {
               ))}
             </tbody>
           </table>
+          <div style={{'display':'flex'}}>
+            <label className="fw-bold mt-2">Select Record Count: </label>
+             <select
+                id="recordsPerPage"
+                className="form-select mx-3"
+                style={{width:'80px'}}
+                value={recordsPerPage}
+                onChange={handleSelectChange}
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+              </select>
+          </div>
         </div>
       </div>
     </div>
