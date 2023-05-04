@@ -2,8 +2,10 @@ import { Field, Form, Formik, ErrorMessage } from "formik";
 import React from "react";
 import * as yup from "yup";
 import Navbar from "../layout/Navbar";
+import { useNavigate, useParams } from "react-router-dom";
 
-const Contact = () => {
+const Login = () => {
+let history = useNavigate();
   const isLoggedIn = false;
   const formInitialSchema = {
     email: "",
@@ -11,6 +13,7 @@ const Contact = () => {
   };
   const onSubmit = (event) => {
     console.log(event);
+    history("/home");
   };
 
   const formValidation = yup.object().shape({
@@ -20,11 +23,11 @@ const Contact = () => {
 
   return (
     <div>
-    {isLoggedIn ? <Navbar /> : null}
-    
-    <div className="container">
+         {isLoggedIn ? <Navbar /> : null}
+   
+    <div className="container w-50 mt-5">
       <div className="py-4">
-        <h1>Contact Page</h1>
+        <h1>Login</h1>
         <Formik
           initialValues={formInitialSchema}
           onSubmit={(event) => {
@@ -74,7 +77,7 @@ const Contact = () => {
               </label>
             </div>
             <button type="submit" className="btn btn-primary">
-              Submit
+              Login
             </button>
           </Form>
         </Formik>
@@ -84,4 +87,4 @@ const Contact = () => {
   );
 };
 
-export default Contact;
+export default Login;
